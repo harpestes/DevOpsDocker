@@ -27,13 +27,16 @@ def db_test():
             port=5432
         )
         cursor = conn.cursor()
-        cursor.execute("SELECT version();")
-        version = cursor.fetchone()
+        cursor.execute("SELECT content FROM messages;")
+        rows = cursor.fetchall()
         cursor.close()
         conn.close()
-        return f"<h1>Database connected!</h1><p>Version: {version[0]}</p>"
+
+        messages_html = "".join([f"<li>{row[0]}</li>" for row in rows])
+
+        return f"<h1>Messages from DB:</h1><ul>{messages_html}</ul>"
     except Exception as e:
-        return f"<h1>Connection failed:</h1><p>{str(e)}</p>"
+        return f"<h1>Error:</h1><p>{str(e)}</p>"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
